@@ -151,7 +151,7 @@ router.post('/', async (req, res) => {
       [String(productId)]
     )
 
-    if (productResult.rowCount === 0) {
+    if ((productResult.rowCount ?? 0) === 0) {
       return res.status(404).json({
         success: false,
         message: 'Product not found',
@@ -278,7 +278,13 @@ router.post('/', async (req, res) => {
         ]
       )
 
-    if (existingCartItem.rowCount > 0) {
+    /*
+      FIX:
+      pg's rowCount can be null.
+      Using ?? 0 makes the comparison
+      safe for TypeScript.
+    */
+    if ((existingCartItem.rowCount ?? 0) > 0) {
       const currentQuantity =
         Number(
           existingCartItem.rows[0].quantity
@@ -449,7 +455,7 @@ router.patch('/:id', async (req, res) => {
       ]
     )
 
-    if (result.rowCount === 0) {
+    if ((result.rowCount ?? 0) === 0) {
       return res.status(404).json({
         success: false,
         message: 'Cart item not found',

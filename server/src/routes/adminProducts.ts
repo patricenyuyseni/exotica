@@ -1,3 +1,4 @@
+
 import { Router, Request } from 'express'
 import fs from 'fs'
 import multer from 'multer'
@@ -32,12 +33,22 @@ if (!fs.existsSync(uploadDir)) {
 }
 
 const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => {
+  destination: (
+    _req: Request,
+    _file: Express.Multer.File,
+    cb: (error: Error | null, destination: string) => void
+  ) => {
     cb(null, uploadDir)
   },
 
-  filename: (_req, file, cb) => {
-    const extension = path.extname(file.originalname)
+  filename: (
+    _req: Request,
+    file: Express.Multer.File,
+    cb: (error: Error | null, filename: string) => void
+  ) => {
+    const extension = path.extname(
+      file.originalname
+    )
 
     cb(
       null,
@@ -53,7 +64,14 @@ const upload = multer({
     fileSize: 5 * 1024 * 1024,
   },
 
-  fileFilter: (_req, file, cb) => {
+  fileFilter: (
+    _req: Request,
+    file: Express.Multer.File,
+    cb: (
+      error: Error | null,
+      acceptFile?: boolean
+    ) => void
+  ) => {
     const allowedTypes = [
       'image/png',
       'image/jpeg',
