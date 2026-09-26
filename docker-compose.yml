@@ -1,0 +1,60 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: exotica-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: exotica
+      POSTGRES_USER: exotica
+      POSTGRES_PASSWORD: exotica123
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  migrate:
+    image: postgres:16-alpine
+    container_name: exotica-migrate
+    restart: 'no'
+    depends_on:
+      - postgres
+    environment:
+      PGPASSWORD: exotica123
+      POSTGRES_USER: exotica
+      POSTGRES_DB: exotica
+    volumes:
+      - ./server/db/migrations:/migrations:ro
+    entrypoint: ["sh", "-c", "until pg_isready -h postgres -p 5432; do sleep 1; done; for f in /migrations/*.sql; do echo 'Applying' $f; psql -h postgres -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\" -f $f; done"]
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: exotica-server
+    restart: unless-stopped
+    ports:
+      - '4000:4000'
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: postgresql://exotica:exotica123@postgres:5432/exotica
+    depends_on:
+      - postgres
+      - migrate
+    volumes:
+      - ./client/public:/app/client-public:ro
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: exotica-client
+    restart: unless-stopped
+    ports:
+      - '80:80'
+    depends_on:
+      - server
+
+volumes:
+  postgres_data:

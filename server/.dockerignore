@@ -1,0 +1,11 @@
+node_modules
+dist
+data
+npm-debug.log
+.env
+*.local
+coverage
+logs
+tmp
+*.tgz
+client

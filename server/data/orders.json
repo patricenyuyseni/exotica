@@ -1,0 +1,19 @@
+[
+  {
+    "id": "6bde77c1-840b-47cb-9b32-7ba17f7976f7",
+    "userId": "guest",
+    "items": [
+      {
+        "productId": "1",
+        "quantity": 2
+      }
+    ],
+    "subtotal": 259.98,
+    "shipping": 5,
+    "tax": 1.5,
+    "total": 266.48,
+    "paymentStatus": "pending",
+    "orderStatus": "processing",
+    "createdAt": "2026-09-23T00:32:44.726Z"
+  }
+]

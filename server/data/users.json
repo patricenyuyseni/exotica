@@ -1,0 +1,58 @@
+[
+  {
+    "id": "78a7a0a8-ff84-47aa-be30-69c7272c52bc",
+    "name": "Admin",
+    "email": "admin@exotica.test",
+    "passwordHash": "$2a$10$2u21fn7JMrYtOZBWuSpFw./omCU7.8SAyhw4lugi1mFbHgti84STG",
+    "role": "admin",
+    "createdAt": "2026-09-22T23:42:35.988Z"
+  },
+  {
+    "id": "7af607ca-7544-4662-8ef3-ccceb18825d3",
+    "name": "Patrice",
+    "email": "patrice-test@example.com",
+    "passwordHash": "$2a$10$hKN9L85WDw92YObcBoHANeyIB5o1Yj7e4T6O8N9L/mJ7vI3LxVC6C",
+    "role": "customer",
+    "createdAt": "2026-09-23T02:51:02.380Z"
+  },
+  {
+    "id": "98a0185a-1afa-4b32-bd26-38f877abc91e",
+    "name": "patrice",
+    "email": "patriceflezy123@gmail.com",
+    "passwordHash": "$2a$10$yka5sNVwBQWcojSKSI5xUeD4H0FaHB2oCvLzeZkthoyhjWVQ3SnGq",
+    "role": "customer",
+    "createdAt": "2026-09-23T03:17:26.883Z"
+  },
+  {
+    "id": "6b5e3395-b476-4926-abab-ed0a64a55251",
+    "name": "patrice",
+    "email": "patrice@gmail.com",
+    "passwordHash": "$2a$10$nRV0pCRoqzcE.9HcP0ELmOmXCrdNKo1ePZW.Ovgbg346zx02eMRNu",
+    "role": "customer",
+    "createdAt": "2026-09-23T03:26:16.422Z"
+  },
+  {
+    "id": "3cd159ea-5882-4450-be4b-dcabb7552a7c",
+    "name": "Patrice",
+    "email": "patrice-new@example.com",
+    "passwordHash": "$2a$10$.oCxNcUhNWFHpwwFnMoaQuda/JdwiaYNd73Un1myBVVOMSohiPw9y",
+    "role": "customer",
+    "createdAt": "2026-09-23T03:27:37.568Z"
+  },
+  {
+    "id": "fae5a433-137e-43d6-8ae2-995d2d23af99",
+    "name": "Patrice",
+    "email": "patrice-second@example.com",
+    "passwordHash": "$2a$10$UTz7FPqCXJAJAJ8EsLC4UOZ.hTPxNMYgbSCcvZ4t5gv3hp9gK7q3e",
+    "role": "customer",
+    "createdAt": "2026-09-23T03:29:10.022Z"
+  },
+  {
+    "id": "19f9e18e-9d13-48ae-a166-c8ce53b8c1bc",
+    "name": "Patrice Test",
+    "email": "patrice-test-2026@example.com",
+    "passwordHash": "$2a$10$EILtlX4k9cy/.xAE2zh1Ju6gg7nKHHN4i6fCmvNSFyGRKBFWw2Vh2",
+    "role": "customer",
+    "createdAt": "2026-09-23T03:33:27.973Z"
+  }
+]
