@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { apiUrl } from '../api'
 
 type Product = {
   id: string
@@ -101,13 +102,9 @@ function ProductCard({ product }: { product: Product }) {
     setAdding(true)
 
     try {
-      /*
-        Get the logged-in user's JWT.
-
-        If there is no token, the backend will
-        treat this as a guest cart.
-      */
-      const token = localStorage.getItem('auth_token') || localStorage.getItem('admin_token')
+      const token =
+        localStorage.getItem('auth_token') ||
+        localStorage.getItem('admin_token')
 
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
@@ -117,7 +114,7 @@ function ProductCard({ product }: { product: Product }) {
         headers.Authorization = `Bearer ${token}`
       }
 
-      const response = await fetch('/api/cart', {
+      const response = await fetch(apiUrl('/api/cart'), {
         method: 'POST',
         headers,
         body: JSON.stringify({
@@ -134,10 +131,8 @@ function ProductCard({ product }: { product: Product }) {
         )
       }
 
-      // Update this product's button
       setCartQuantity((current) => current + 1)
 
-      // Tell Navbar that cart changed
       window.dispatchEvent(
         new Event('cart-updated')
       )
@@ -295,19 +290,15 @@ export default function Shop() {
   const [sort, setSort] = useState('featured')
   const [showFilters, setShowFilters] = useState(false)
 
-  /*
-  |--------------------------------------------------------------------------
-  | LOAD FIRST PAGE
-  |--------------------------------------------------------------------------
-  */
-
   useEffect(() => {
     const loadProducts = async () => {
       try {
         setLoading(true)
 
         const response = await fetch(
-          `/api/products?page=1&limit=${PRODUCTS_PER_PAGE}`
+          apiUrl(
+            `/api/products?page=1&limit=${PRODUCTS_PER_PAGE}`
+          )
         )
 
         if (!response.ok) {
@@ -341,12 +332,6 @@ export default function Shop() {
     loadProducts()
   }, [])
 
-  /*
-  |--------------------------------------------------------------------------
-  | LOAD MORE PRODUCTS
-  |--------------------------------------------------------------------------
-  */
-
   const loadMoreProducts = async () => {
     if (loadingMore) return
 
@@ -360,7 +345,9 @@ export default function Shop() {
       setLoadingMore(true)
 
       const response = await fetch(
-        `/api/products?page=${nextPage}&limit=${PRODUCTS_PER_PAGE}`
+        apiUrl(
+          `/api/products?page=${nextPage}&limit=${PRODUCTS_PER_PAGE}`
+        )
       )
 
       if (!response.ok) {
@@ -395,12 +382,6 @@ export default function Shop() {
     }
   }
 
-  /*
-  |--------------------------------------------------------------------------
-  | CATEGORIES
-  |--------------------------------------------------------------------------
-  */
-
   const categories = useMemo(() => {
     const values = products
       .map((product) => product.category)
@@ -411,12 +392,6 @@ export default function Shop() {
       ...Array.from(new Set(values)),
     ]
   }, [products])
-
-  /*
-  |--------------------------------------------------------------------------
-  | FILTER + SORT
-  |--------------------------------------------------------------------------
-  */
 
   const filteredProducts = useMemo(() => {
     let result = [...products]
@@ -494,7 +469,6 @@ export default function Shop() {
     <div className="storefront">
       <AgeGate onAccept={() => {}} />
 
-      {/* Announcement */}
       <div className="announcement">
         <span>
           EXOTICA — Discover the extraordinary
@@ -507,7 +481,6 @@ export default function Shop() {
         <span>Premium collection</span>
       </div>
 
-      {/* Hero */}
       <section className="hero">
         <div className="hero-content">
           <span className="hero-eyebrow">
@@ -541,7 +514,6 @@ export default function Shop() {
         </div>
       </section>
 
-      {/* Categories */}
       <section className="category-section">
         <div className="section-heading">
           <div>
@@ -578,7 +550,6 @@ export default function Shop() {
         </div>
       </section>
 
-      {/* Featured */}
       {featuredProducts.length > 0 && (
         <section className="featured-section">
           <div className="section-heading">
@@ -619,7 +590,6 @@ export default function Shop() {
         </section>
       )}
 
-      {/* Collection */}
       <section
         id="collection"
         className="collection-section"
@@ -681,7 +651,6 @@ export default function Shop() {
           </div>
         </div>
 
-        {/* Search + filters */}
         <div
           className={
             showFilters
@@ -761,7 +730,6 @@ export default function Shop() {
               )}
             </div>
 
-            {/* See More Products */}
             {hasMoreProducts && (
               <div className="see-more-container">
                 <button
@@ -793,7 +761,6 @@ export default function Shop() {
         )}
       </section>
 
-      {/* Brand section */}
       <section className="brand-section">
         <div className="brand-section-inner">
           <span className="section-eyebrow">
