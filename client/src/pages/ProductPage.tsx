@@ -1,5 +1,7 @@
+
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { apiUrl } from '../api'
 
 type Product = {
   id: string
@@ -44,7 +46,7 @@ export default function ProductPage() {
         setLoading(true)
 
         const response = await fetch(
-          `/api/products/${encodeURIComponent(slug)}`
+          apiUrl(`/api/products/${encodeURIComponent(slug)}`)
         )
 
         const data = await response.json()
@@ -104,14 +106,17 @@ export default function ProductPage() {
         headers.Authorization = `Bearer ${token}`
       }
 
-      const response = await fetch('/api/cart', {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          productId: product.id,
-          quantity,
-        }),
-      })
+      const response = await fetch(
+        apiUrl('/api/cart'),
+        {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            productId: product.id,
+            quantity,
+          }),
+        }
+      )
 
       const data = await response.json()
 
