@@ -1,5 +1,7 @@
+
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { apiUrl } from '../api'
 
 type StoredUser = {
   id: string
@@ -48,7 +50,7 @@ export default function Navbar() {
       }
 
       const response = await fetch(
-        '/api/cart',
+        apiUrl('/api/cart'),
         {
           headers,
         }

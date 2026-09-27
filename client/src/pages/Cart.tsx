@@ -1,4 +1,6 @@
+
 import React, { useEffect, useMemo, useState } from 'react'
+import { apiUrl } from '../api'
 
 type Product = {
   id: string
@@ -61,10 +63,10 @@ export default function Cart() {
 
       const [cartResponse, productsResponse] =
         await Promise.all([
-          fetch('/api/cart', {
+          fetch(apiUrl('/api/cart'), {
             headers: getAuthHeaders(),
           }),
-          fetch('/api/products'),
+          fetch(apiUrl('/api/products')),
         ])
 
       const cartData = await cartResponse.json()
@@ -139,7 +141,7 @@ export default function Cart() {
       setCheckoutMessage('')
 
       const response = await fetch(
-        `/api/cart/${encodeURIComponent(item.id)}`,
+        apiUrl(`/api/cart/${encodeURIComponent(item.id)}`),
         {
           method: 'PATCH',
           headers: getAuthHeaders(true),
@@ -193,7 +195,7 @@ export default function Cart() {
       setCheckoutMessage('')
 
       const response = await fetch(
-        `/api/cart/${encodeURIComponent(item.id)}`,
+        apiUrl(`/api/cart/${encodeURIComponent(item.id)}`),
         {
           method: 'DELETE',
           headers: getAuthHeaders(),
@@ -226,7 +228,7 @@ export default function Cart() {
       setCheckoutMessage(
         error instanceof Error
           ? error.message
-          : 'Could not remove item'
+          : 'Could not remove cart item'
       )
     } finally {
       setUpdatingId(null)
@@ -275,7 +277,7 @@ export default function Cart() {
     try {
       setCheckoutLoading(true)
 
-      const response = await fetch('/api/orders', {
+      const response = await fetch(apiUrl('/api/orders'), {
         method: 'POST',
         headers: getAuthHeaders(true),
         body: JSON.stringify({
