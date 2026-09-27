@@ -1,5 +1,7 @@
+
 import React, { useEffect, useState } from 'react'
 import AdminLayout from '../components/AdminLayout'
+import { apiUrl } from '../api'
 
 type Product = {
   id: string
@@ -67,9 +69,12 @@ export default function AdminProducts() {
     setLoading(true)
 
     try {
-      const res = await fetch('/api/admin/products', {
-        headers: authHeaders(),
-      })
+      const res = await fetch(
+        apiUrl('/api/admin/products'),
+        {
+          headers: authHeaders(),
+        }
+      )
 
       const data = await res.json()
 
@@ -164,7 +169,7 @@ export default function AdminProducts() {
 
     try {
       const res = await fetch(
-        '/api/admin/products/generate-description',
+        apiUrl('/api/admin/products/generate-description'),
         {
           method: 'POST',
           headers: {
@@ -238,11 +243,14 @@ export default function AdminProducts() {
         formData.append('images', file)
       }
 
-      const res = await fetch('/api/admin/products', {
-        method: 'POST',
-        headers: authHeaders(),
-        body: formData,
-      })
+      const res = await fetch(
+        apiUrl('/api/admin/products'),
+        {
+          method: 'POST',
+          headers: authHeaders(),
+          body: formData,
+        }
+      )
 
       const data = await res.json()
 
@@ -310,6 +318,11 @@ export default function AdminProducts() {
       return
     }
 
+    if (!getToken()) {
+      alert('Please login first.')
+      return
+    }
+
     setSaving(true)
 
     try {
@@ -343,7 +356,7 @@ export default function AdminProducts() {
       }
 
       const res = await fetch(
-        `/api/admin/products/${editing.id}`,
+        apiUrl(`/api/admin/products/${editing.id}`),
         {
           method: 'PATCH',
           headers: authHeaders(),
@@ -384,9 +397,14 @@ export default function AdminProducts() {
       return
     }
 
+    if (!getToken()) {
+      alert('Please login first.')
+      return
+    }
+
     try {
       const res = await fetch(
-        `/api/admin/products/${id}`,
+        apiUrl(`/api/admin/products/${id}`),
         {
           method: 'DELETE',
           headers: authHeaders(),
@@ -436,8 +454,6 @@ export default function AdminProducts() {
             margin: '0 auto',
           }}
         >
-          {/* HEADER */}
-
           <div
             style={{
               display: 'flex',
@@ -485,8 +501,6 @@ export default function AdminProducts() {
             </button>
           </div>
 
-          {/* PRODUCT FORM */}
-
           <section
             style={{
               background: '#141419',
@@ -532,16 +546,12 @@ export default function AdminProducts() {
                   gap: 32,
                 }}
               >
-                {/* LEFT SIDE */}
-
                 <div
                   style={{
                     display: 'grid',
                     gap: 20,
                   }}
                 >
-                  {/* BASIC INFORMATION */}
-
                   <div>
                     <h3 style={{ marginBottom: 14 }}>
                       Basic Information
@@ -605,8 +615,6 @@ export default function AdminProducts() {
                           </button>
                         </div>
                       </label>
-
-                      {/* AI DESCRIPTION */}
 
                       <label>
                         <div
@@ -697,8 +705,6 @@ export default function AdminProducts() {
                       </label>
                     </div>
                   </div>
-
-                  {/* PRICING */}
 
                   <div>
                     <h3 style={{ marginBottom: 14 }}>
@@ -796,8 +802,6 @@ export default function AdminProducts() {
                     </div>
                   </div>
 
-                  {/* CATEGORY */}
-
                   <div>
                     <h3 style={{ marginBottom: 14 }}>
                       Organization
@@ -821,8 +825,6 @@ export default function AdminProducts() {
                       />
                     </label>
                   </div>
-
-                  {/* STATUS */}
 
                   <div>
                     <h3 style={{ marginBottom: 14 }}>
@@ -886,8 +888,6 @@ export default function AdminProducts() {
                     </div>
                   </div>
                 </div>
-
-                {/* RIGHT SIDE */}
 
                 <div>
                   <h3 style={{ marginBottom: 14 }}>
@@ -964,8 +964,6 @@ export default function AdminProducts() {
                 </div>
               </div>
 
-              {/* ACTIONS */}
-
               <div
                 style={{
                   display: 'flex',
@@ -1008,8 +1006,6 @@ export default function AdminProducts() {
               </div>
             </form>
           </section>
-
-          {/* EXISTING PRODUCTS */}
 
           <section>
             <div

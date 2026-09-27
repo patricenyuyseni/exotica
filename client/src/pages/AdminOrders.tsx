@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import AdminLayout from '../components/AdminLayout'
+import { apiUrl } from '../api'
 
 type OrderItem = {
   id: string
@@ -46,7 +47,7 @@ export default function AdminOrders() {
       const token =
         localStorage.getItem('auth_token')
 
-      const response = await fetch('/api/orders', {
+      const response = await fetch(apiUrl('/api/orders'), {
         headers: token
           ? {
               Authorization: `Bearer ${token}`,
@@ -86,7 +87,7 @@ export default function AdminOrders() {
         localStorage.getItem('auth_token')
 
       const response = await fetch(
-        `/api/orders/${orderId}`,
+        apiUrl(`/api/orders/${orderId}`),
         {
           headers: token
             ? {

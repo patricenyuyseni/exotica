@@ -1,3 +1,4 @@
+
 import { Router } from 'express'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
@@ -6,31 +7,163 @@ import db from '../db/index.js'
 
 const router = Router()
 
-router.post('/register', async (req, res) => {
-  const { name, email, password } = req.body
+const emailRegex =
+  /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
-  if (!name || !email || !password) {
+const nameRegex =
+  /^[A-Za-zÀ-ÖØ-öø-ÿ]+(?:[ '-][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/
+
+const passwordRegex =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/
+
+const getJwtSecret = () => {
+  const secret = process.env.JWT_SECRET
+
+  if (!secret) {
+    throw new Error('JWT_SECRET is not configured')
+  }
+
+  return secret
+}
+
+/*
+|--------------------------------------------------------------------------
+| REGISTER
+|--------------------------------------------------------------------------
+*/
+
+router.post('/register', async (req, res) => {
+  const rawName =
+    typeof req.body?.name === 'string'
+      ? req.body.name
+      : ''
+
+  const rawEmail =
+    typeof req.body?.email === 'string'
+      ? req.body.email
+      : ''
+
+  const password =
+    typeof req.body?.password === 'string'
+      ? req.body.password
+      : ''
+
+  const name = rawName.trim()
+  const email = rawEmail.trim().toLowerCase()
+
+  /*
+   * Name validation
+   */
+
+  if (!name) {
     return res.status(400).json({
       success: false,
-      message: 'Name, email and password are required',
+      message: 'Please enter your name.',
+    })
+  }
+
+  if (name.length < 2) {
+    return res.status(400).json({
+      success: false,
+      message: 'Your name must be at least 2 characters long.',
+    })
+  }
+
+  if (name.length > 50) {
+    return res.status(400).json({
+      success: false,
+      message: 'Your name must be 50 characters or less.',
+    })
+  }
+
+  if (!nameRegex.test(name)) {
+    return res.status(400).json({
+      success: false,
+      message:
+        'Your name can only contain letters, spaces, hyphens, and apostrophes.',
+    })
+  }
+
+  /*
+   * Email validation
+   */
+
+  if (!email) {
+    return res.status(400).json({
+      success: false,
+      message: 'Please enter your email address.',
+    })
+  }
+
+  if (email.length > 254) {
+    return res.status(400).json({
+      success: false,
+      message: 'Please enter a valid email address.',
+    })
+  }
+
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({
+      success: false,
+      message: 'Please enter a valid email address.',
+    })
+  }
+
+  /*
+   * Password validation
+   */
+
+  if (!password) {
+    return res.status(400).json({
+      success: false,
+      message: 'Please enter a password.',
+    })
+  }
+
+  if (password.length < 8) {
+    return res.status(400).json({
+      success: false,
+      message:
+        'Your password must be at least 8 characters long.',
+    })
+  }
+
+  if (!passwordRegex.test(password)) {
+    return res.status(400).json({
+      success: false,
+      message:
+        'Your password must contain an uppercase letter, a lowercase letter, a number, and a special character.',
     })
   }
 
   try {
+    /*
+     * Check whether email already exists
+     */
+
     const existing = await db.query(
-      'SELECT id FROM users WHERE email = $1 LIMIT 1',
+      'SELECT id FROM users WHERE LOWER(email) = $1 LIMIT 1',
       [email]
     )
 
     if (existing.rowCount && existing.rowCount > 0) {
-      return res.status(400).json({
+      return res.status(409).json({
         success: false,
-        message: 'Email already exists',
+        message:
+          'An account with this email already exists. Please log in instead.',
       })
     }
 
-    const hash = await bcrypt.hash(password, 10)
+    /*
+     * Hash password
+     */
+
+    const hash = await bcrypt.hash(password, 12)
     const id = uuidv4()
+
+    /*
+     * Create customer account
+     */
 
     const result = await db.query(
       `INSERT INTO users
@@ -43,12 +176,16 @@ router.post('/register', async (req, res) => {
 
     const user = result.rows[0]
 
+    /*
+     * Create JWT
+     */
+
     const token = jwt.sign(
       {
         id: user.id,
         role: user.role,
       },
-      process.env.JWT_SECRET || 'dev',
+      getJwtSecret(),
       {
         expiresIn: '30d',
       }
@@ -71,18 +208,57 @@ router.post('/register', async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      message: 'Registration failed',
+      message:
+        'We could not create your account. Please try again.',
     })
   }
 })
 
-router.post('/login', async (req, res) => {
-  const { email, password } = req.body
+/*
+|--------------------------------------------------------------------------
+| LOGIN
+|--------------------------------------------------------------------------
+*/
 
-  if (!email || !password) {
+router.post('/login', async (req, res) => {
+  const rawEmail =
+    typeof req.body?.email === 'string'
+      ? req.body.email
+      : ''
+
+  const password =
+    typeof req.body?.password === 'string'
+      ? req.body.password
+      : ''
+
+  const email = rawEmail.trim().toLowerCase()
+
+  /*
+   * Email validation
+   */
+
+  if (!email) {
     return res.status(400).json({
       success: false,
-      message: 'Email and password are required',
+      message: 'Please enter your email address.',
+    })
+  }
+
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({
+      success: false,
+      message: 'Please enter a valid email address.',
+    })
+  }
+
+  /*
+   * Password validation
+   */
+
+  if (!password) {
+    return res.status(400).json({
+      success: false,
+      message: 'Please enter your password.',
     })
   }
 
@@ -95,15 +271,20 @@ router.post('/login', async (req, res) => {
         password_hash,
         role
        FROM users
-       WHERE email = $1
+       WHERE LOWER(email) = $1
        LIMIT 1`,
       [email]
     )
 
+    /*
+     * Use the same message for unknown email
+     * and incorrect password.
+     */
+
     if (result.rowCount === 0) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials',
+        message: 'Invalid email or password.',
       })
     }
 
@@ -117,16 +298,20 @@ router.post('/login', async (req, res) => {
     if (!passwordMatch) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials',
+        message: 'Invalid email or password.',
       })
     }
+
+    /*
+     * Create JWT
+     */
 
     const token = jwt.sign(
       {
         id: user.id,
         role: user.role,
       },
-      process.env.JWT_SECRET || 'dev',
+      getJwtSecret(),
       {
         expiresIn: '30d',
       }
@@ -149,7 +334,8 @@ router.post('/login', async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      message: 'Login failed',
+      message:
+        'We could not log you in. Please try again.',
     })
   }
 })
