@@ -380,7 +380,7 @@ router.post(
 
       const imagePaths = files.map(
         (file) =>
-          `/images/products/${file.filename}`
+          `${process.env.PUBLIC_API_URL || ''}/images/products/${file.filename}`
       )
 
       const primaryImage =
@@ -535,7 +535,7 @@ router.patch(
 
       const newImagePaths = files.map(
         (file) =>
-          `/images/products/${file.filename}`
+          `${process.env.PUBLIC_API_URL || ''}/images/products/${file.filename}`
       )
 
       let image =

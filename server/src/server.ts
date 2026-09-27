@@ -32,8 +32,41 @@ app.get('/health', (_req: Request, res: Response) => {
   res.json({ status: 'ok' })
 })
 
-const clientDist = path.join(process.cwd(), 'client', 'dist')
-app.use('/', express.static(clientDist))
+/*
+ * Serve uploaded product images.
+ *
+ * Multer saves uploaded images to:
+ * client/public/images/products
+ *
+ * This makes them available at:
+ * /images/products/<filename>
+ */
+const productImagesDir = path.join(
+  process.cwd(),
+  'client',
+  'public',
+  'images',
+  'products'
+)
+
+app.use(
+  '/images/products',
+  express.static(productImagesDir)
+)
+
+/*
+ * Serve the React production build.
+ */
+const clientDist = path.join(
+  process.cwd(),
+  'client',
+  'dist'
+)
+
+app.use(
+  '/',
+  express.static(clientDist)
+)
 
 const PORT = Number(process.env.PORT) || 4000
 
@@ -42,11 +75,16 @@ if (process.env.NODE_ENV !== 'test') {
     try {
       await db.ensureSchema()
     } catch (e) {
-      console.warn('ensureSchema failed', e)
+      console.warn(
+        'ensureSchema failed',
+        e
+      )
     }
 
     app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`)
+      console.log(
+        `Server running on port ${PORT}`
+      )
     })
   })()
 }
