@@ -1,4 +1,3 @@
-
 import React, { useEffect, useMemo, useState } from 'react'
 import { apiUrl } from '../api'
 
@@ -277,27 +276,27 @@ export default function Cart() {
     try {
       setCheckoutLoading(true)
 
-      const response = await fetch(apiUrl('/api/orders'), {
-        method: 'POST',
-        headers: getAuthHeaders(true),
-        body: JSON.stringify({
-          customer: {
-            name: customer.name.trim(),
-            email: customer.email.trim(),
-            phone: customer.phone.trim(),
-          },
-
-          notes: notes.trim(),
-
-          items: items.map(item => ({
-            productId: item.productId,
-            quantity: item.quantity,
-          })),
-
-          shipping,
-          tax,
-        }),
-      })
+      const response = await fetch(
+        apiUrl('/api/orders'),
+        {
+          method: 'POST',
+          headers: getAuthHeaders(true),
+          body: JSON.stringify({
+            customer: {
+              name: customer.name.trim(),
+              email: customer.email.trim(),
+              phone: customer.phone.trim(),
+            },
+            notes: notes.trim(),
+            items: items.map(item => ({
+              productId: item.productId,
+              quantity: item.quantity,
+            })),
+            shipping,
+            tax,
+          }),
+        }
+      )
 
       const data = await response.json()
 
@@ -398,6 +397,7 @@ export default function Cart() {
         </div>
       ) : (
         <div
+          className="cart-layout"
           style={{
             display: 'grid',
             gridTemplateColumns:
@@ -423,6 +423,7 @@ export default function Cart() {
               return (
                 <div
                   key={item.id}
+                  className="cart-item"
                   style={{
                     display: 'flex',
                     gap: 16,
@@ -463,8 +464,10 @@ export default function Cart() {
                   )}
 
                   <div
+                    className="cart-item-info"
                     style={{
                       flex: 1,
+                      minWidth: 0,
                     }}
                   >
                     <h3
@@ -486,6 +489,7 @@ export default function Cart() {
                     </p>
 
                     <div
+                      className="cart-item-actions"
                       style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -581,6 +585,7 @@ export default function Cart() {
           </section>
 
           <aside
+            className="cart-summary"
             style={{
               background: '#0f1724',
               borderRadius: 12,
