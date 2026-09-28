@@ -1,3 +1,4 @@
+
 import React, { useEffect, useMemo, useState } from 'react'
 import { apiUrl } from '../api'
 
@@ -342,7 +343,7 @@ export default function Cart() {
         style={{
           maxWidth: 1100,
           margin: '0 auto',
-          padding: 32,
+          padding: '32px 20px',
         }}
       >
         <h1>Your Cart</h1>
@@ -356,7 +357,9 @@ export default function Cart() {
       style={{
         maxWidth: 1100,
         margin: '0 auto',
-        padding: '32px 20px 60px',
+        padding: '24px 16px 60px',
+        width: '100%',
+        boxSizing: 'border-box',
       }}
     >
       <h1
@@ -425,13 +428,17 @@ export default function Cart() {
                   key={item.id}
                   className="cart-item"
                   style={{
-                    display: 'flex',
+                    display: 'grid',
+                    gridTemplateColumns:
+                      '100px minmax(0, 1fr) auto',
                     gap: 16,
                     padding: 16,
                     marginBottom: 14,
-                    borderRadius: 12,
+                    borderRadius: 14,
                     background: '#0f1724',
                     alignItems: 'center',
+                    boxSizing: 'border-box',
+                    width: '100%',
                   }}
                 >
                   {product?.image ? (
@@ -443,7 +450,7 @@ export default function Cart() {
                         height: 100,
                         objectFit: 'cover',
                         borderRadius: 10,
-                        flexShrink: 0,
+                        display: 'block',
                       }}
                     />
                   ) : (
@@ -456,7 +463,8 @@ export default function Cart() {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        flexShrink: 0,
+                        fontSize: 12,
+                        textAlign: 'center',
                       }}
                     >
                       No image
@@ -464,15 +472,16 @@ export default function Cart() {
                   )}
 
                   <div
-                    className="cart-item-info"
                     style={{
-                      flex: 1,
                       minWidth: 0,
                     }}
                   >
                     <h3
                       style={{
                         margin: '0 0 6px',
+                        fontSize: 17,
+                        lineHeight: 1.3,
+                        wordBreak: 'break-word',
                       }}
                     >
                       {product?.name ||
@@ -482,77 +491,95 @@ export default function Cart() {
                     <p
                       style={{
                         margin: '0 0 12px',
-                        opacity: 0.8,
+                        opacity: 0.75,
+                        fontSize: 14,
                       }}
                     >
-                      ${price.toFixed(2)}
+                      ${price.toFixed(2)} each
                     </p>
 
                     <div
-                      className="cart-item-actions"
                       style={{
                         display: 'flex',
                         alignItems: 'center',
+                        flexWrap: 'wrap',
                         gap: 8,
                       }}
                     >
-                      <button
-                        type="button"
-                        disabled={
-                          isUpdating ||
-                          item.quantity <= 1
-                        }
-                        onClick={() =>
-                          updateQuantity(
-                            item,
-                            item.quantity - 1
-                          )
-                        }
+                      <div
                         style={{
-                          width: 34,
-                          height: 34,
-                          borderRadius: 8,
-                          border: 0,
-                          cursor:
+                          display: 'flex',
+                          alignItems: 'center',
+                          border:
+                            '1px solid #334155',
+                          borderRadius: 9,
+                          overflow: 'hidden',
+                        }}
+                      >
+                        <button
+                          type="button"
+                          disabled={
                             isUpdating ||
                             item.quantity <= 1
+                          }
+                          onClick={() =>
+                            updateQuantity(
+                              item,
+                              item.quantity - 1
+                            )
+                          }
+                          style={{
+                            width: 36,
+                            height: 36,
+                            border: 0,
+                            background:
+                              '#1e293b',
+                            color: '#fff',
+                            fontSize: 20,
+                            cursor:
+                              isUpdating ||
+                              item.quantity <= 1
+                                ? 'not-allowed'
+                                : 'pointer',
+                          }}
+                        >
+                          −
+                        </button>
+
+                        <strong
+                          style={{
+                            minWidth: 38,
+                            textAlign: 'center',
+                          }}
+                        >
+                          {item.quantity}
+                        </strong>
+
+                        <button
+                          type="button"
+                          disabled={isUpdating}
+                          onClick={() =>
+                            updateQuantity(
+                              item,
+                              item.quantity + 1
+                            )
+                          }
+                          style={{
+                            width: 36,
+                            height: 36,
+                            border: 0,
+                            background:
+                              '#1e293b',
+                            color: '#fff',
+                            fontSize: 20,
+                            cursor: isUpdating
                               ? 'not-allowed'
                               : 'pointer',
-                        }}
-                      >
-                        −
-                      </button>
-
-                      <strong
-                        style={{
-                          minWidth: 24,
-                          textAlign: 'center',
-                        }}
-                      >
-                        {item.quantity}
-                      </strong>
-
-                      <button
-                        type="button"
-                        disabled={isUpdating}
-                        onClick={() =>
-                          updateQuantity(
-                            item,
-                            item.quantity + 1
-                          )
-                        }
-                        style={{
-                          width: 34,
-                          height: 34,
-                          borderRadius: 8,
-                          border: 0,
-                          cursor: isUpdating
-                            ? 'not-allowed'
-                            : 'pointer',
-                        }}
-                      >
-                        +
-                      </button>
+                          }}
+                        >
+                          +
+                        </button>
+                      </div>
 
                       <button
                         type="button"
@@ -561,11 +588,12 @@ export default function Cart() {
                           removeItem(item)
                         }
                         style={{
-                          marginLeft: 12,
                           border: 0,
                           background:
                             'transparent',
-                          color: '#ef4444',
+                          color: '#f87171',
+                          padding: '8px 4px',
+                          fontSize: 14,
                           cursor: isUpdating
                             ? 'not-allowed'
                             : 'pointer',
@@ -576,7 +604,13 @@ export default function Cart() {
                     </div>
                   </div>
 
-                  <strong>
+                  <strong
+                    style={{
+                      fontSize: 17,
+                      whiteSpace: 'nowrap',
+                      alignSelf: 'start',
+                    }}
+                  >
                     ${lineTotal.toFixed(2)}
                   </strong>
                 </div>
@@ -592,6 +626,8 @@ export default function Cart() {
               padding: 20,
               position: 'sticky',
               top: 20,
+              boxSizing: 'border-box',
+              width: '100%',
             }}
           >
             <h2 style={{ marginTop: 0 }}>
@@ -798,6 +834,75 @@ export default function Cart() {
           </aside>
         </div>
       )}
+
+      <style>{`
+        @media (max-width: 700px) {
+          .cart-layout {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 18px !important;
+          }
+
+          .cart-layout > section {
+            width: 100%;
+          }
+
+          .cart-item {
+            grid-template-columns: 78px minmax(0, 1fr) !important;
+            gap: 12px !important;
+            padding: 12px !important;
+            align-items: start !important;
+          }
+
+          .cart-item img,
+          .cart-item > div:first-child {
+            width: 78px !important;
+            height: 78px !important;
+          }
+
+          .cart-item > strong {
+            grid-column: 2;
+            grid-row: 1;
+            justify-self: end;
+            font-size: 16px !important;
+          }
+
+          .cart-item-info {
+            grid-column: 2;
+          }
+
+          .cart-item-actions {
+            width: 100%;
+          }
+
+          .cart-summary {
+            position: static !important;
+            width: 100% !important;
+          }
+        }
+
+        @media (max-width: 420px) {
+          .cart-item {
+            grid-template-columns: 68px minmax(0, 1fr) !important;
+            gap: 10px !important;
+            padding: 10px !important;
+          }
+
+          .cart-item img,
+          .cart-item > div:first-child {
+            width: 68px !important;
+            height: 68px !important;
+          }
+
+          .cart-item h3 {
+            font-size: 15px !important;
+          }
+
+          .cart-item button {
+            touch-action: manipulation;
+          }
+        }
+      `}</style>
     </div>
   )
 }
